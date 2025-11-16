@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h2>Spring Boot Frontend Demo</h2>
+
+    <label>
+      <input type="checkbox" id="check"> Send checkbox value
+    </label>
+
+    <p id="response"></p>
+
+    <script>
+      const checkbox = document.getElementById('check');
+      const responseText = document.getElementById('response');
+
+      checkbox.addEventListener('change', async () => {
+        const res = await fetch('http://localhost:8080/api/check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ checked: checkbox.checked })
+        });
+
+        const text = await res.text();
+        responseText.textContent = text;
+      });
+    </script>
+  </body>
+</html>
