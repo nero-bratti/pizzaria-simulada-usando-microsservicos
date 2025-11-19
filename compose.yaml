@@ -1,0 +1,79 @@
+services:
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=123
+    networks:
+      - pizza-network
+  pizzaria:
+    build: pizzaria-service
+    image: pizzaria
+    ports:
+      - "8000:8000"
+    networks:
+      - pizza-network
+    depends_on:
+      - naming-server
+      - rabbitmq
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://naming-server:8761/eureka
+      - spring.rabbitmq.host=rabbitmq
+      - spring.rabbitmq.port=5672
+      - spring.rabbitmq.username=user
+      - spring.rabbitmq.password=123
+  estoque:
+    build: estoque-service
+    image: estoque
+    ports:
+      - "8100:8100"
+    networks:
+      - pizza-network
+    depends_on:
+      - naming-server
+      - rabbitmq
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://naming-server:8761/eureka
+      - spring.rabbitmq.host=rabbitmq
+      - spring.rabbitmq.port=5672
+      - spring.rabbitmq.username=user
+      - spring.rabbitmq.password=123
+  entregas:
+    build: entregas-service
+    image: entrega
+    ports:
+      - "8200:8200"
+    networks:
+      - pizza-network
+    depends_on:
+      - naming-server
+      - rabbitmq
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://naming-server:8761/eureka
+      - spring.rabbitmq.host=rabbitmq
+      - spring.rabbitmq.port=5672
+      - spring.rabbitmq.username=user
+      - spring.rabbitmq.password=123
+  api-gateway:
+    build: api-gateway
+    image: gateway
+    ports:
+      - "8765:8765"
+    networks:
+      - pizza-network
+    depends_on:
+      - naming-server
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://naming-server:8761/eureka
+  naming-server:
+    build: naming-server
+    image: nameserver
+    ports:
+      - "8761:8761"
+    networks:
+      - pizza-network
+networks:
+  pizza-network:
