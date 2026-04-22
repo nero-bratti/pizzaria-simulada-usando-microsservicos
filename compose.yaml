@@ -1,7 +1,0 @@
-services:
-  web:
-    build: .          # Path to your Dockerfile
-    ports:
-      - "8000:5000"   # Maps host port 8000 to container port 5000
-  db:
-    image: postgres   # Uses a pre-built image from Docker Hub
